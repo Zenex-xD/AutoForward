@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from utils.states import BotStates
-from utils.helpers import build_cancel_keyboard, build_main_keyboard
+from utils.helpers import build_cancel_keyboard, build_account_keyboard, safe_edit_menu
 from services.pyrogram_manager import pyrogram_manager
 from database.db import db
 from utils.logger import logger
@@ -13,15 +13,12 @@ router = Router()
 async def cb_login_start(callback: CallbackQuery, state: FSMContext):
     """Prompt user to paste Pyrogram String Session."""
     await state.set_state(BotStates.waiting_for_session)
-    await callback.message.edit_text(
-        text=(
-            "🔐 <b>Login Pyrogram Account</b>\n\n"
-            "Please paste your <b>Pyrogram String Session</b> below.\n\n"
-            "<i>Note: Your session string will be stored securely in your private SQLite configuration database.</i>"
-        ),
-        reply_markup=build_cancel_keyboard(),
-        parse_mode="HTML"
+    prompt_text = (
+        "🔐 <b><u>LOGIN PYROGRAM ACCOUNT</u></b>\n\n"
+        "Please paste your <b>Pyrogram String Session</b> in the chat below.\n\n"
+        "❖ <i>Your session string is stored encrypted & locally in SQLite database.</i>"
     )
+    await safe_edit_menu(callback.message, prompt_text, build_cancel_keyboard())
     await callback.answer()
 
 @router.message(BotStates.waiting_for_session)
@@ -31,12 +28,13 @@ async def process_session_string(message: Message, state: FSMContext):
 
     if not session_str or len(session_str) < 20:
         await message.answer(
-            text="❌ Invalid input. Please paste a valid Pyrogram String Session.",
-            reply_markup=build_cancel_keyboard()
+            text="❌ <b>Invalid Input!</b> Please paste a valid Pyrogram String Session string.",
+            reply_markup=build_cancel_keyboard(),
+            parse_mode="HTML"
         )
         return
 
-    status_msg = await message.answer("🔄 Validating String Session, please wait...")
+    status_msg = await message.answer("🔄 <b>Validating String Session...</b>", parse_mode="HTML")
 
     try:
         acc_info = await pyrogram_manager.validate_session(session_str)
@@ -52,22 +50,23 @@ async def process_session_string(message: Message, state: FSMContext):
         await state.clear()
         await status_msg.edit_text(
             text=(
-                "✅ <b>Login Successful!</b>\n\n"
-                f"👤 <b>Account Name:</b> {acc_info['account_name']}\n"
-                f"📞 <b>Phone / ID:</b> {acc_info['phone_number']}\n\n"
-                "Your account session is saved successfully."
+                "✅ <b><u>LOGIN SUCCESSFUL!</u></b>\n\n"
+                f"👤 <b>Account:</b> <code>{acc_info['account_name']}</code>\n"
+                f"📞 <b>Phone / ID:</b> <code>{acc_info['phone_number']}</code>\n\n"
+                "❖ Your account session is active and saved securely."
             ),
-            reply_markup=build_main_keyboard(),
+            reply_markup=build_account_keyboard(),
             parse_mode="HTML"
         )
     except Exception as e:
         logger.error(f"Session validation failed for user {message.from_user.id}: {e}")
         await status_msg.edit_text(
             text=(
-                "❌ <b>Login Failed!</b>\n\n"
-                f"Error: {str(e)}\n\n"
-                "Please make sure your string session is valid and try again."
+                "❌ <b><u>LOGIN FAILED!</u></b>\n\n"
+                f"<b>Error:</b> <code>{str(e)}</code>\n\n"
+                "Please verify your Pyrogram String Session and try again."
             ),
             reply_markup=build_cancel_keyboard(),
             parse_mode="HTML"
         )
+

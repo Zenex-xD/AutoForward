@@ -2,10 +2,19 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from database.db import db
 from services.pyrogram_manager import pyrogram_manager
-from utils.helpers import build_main_keyboard
+from utils.helpers import build_main_keyboard, build_status_keyboard, safe_edit_menu
 from utils.logger import logger
 
 router = Router()
+
+@router.callback_query(F.data == "btn_toggle_forward")
+async def cb_toggle_forward(callback: CallbackQuery):
+    """Toggles auto-forwarding state (Enable if stopped, Disable if running)."""
+    user_id = callback.from_user.id
+    if pyrogram_manager.is_active(user_id):
+        await cb_disable_forward(callback)
+    else:
+        await cb_enable_forward(callback)
 
 @router.callback_query(F.data == "btn_enable_forward")
 async def cb_enable_forward(callback: CallbackQuery):
@@ -23,20 +32,17 @@ async def cb_enable_forward(callback: CallbackQuery):
         missing.append("📤 Destination Chat")
 
     if missing:
-        await callback.message.edit_text(
-            text=(
-                "⚠️ <b>Cannot Enable Auto Forward!</b>\n\n"
-                "The following required settings are missing:\n"
-                + "\n".join([f"• {m}" for m in missing]) + "\n\n"
-                "Please configure them first using the menu buttons below."
-            ),
-            reply_markup=build_main_keyboard(),
-            parse_mode="HTML"
+        missing_text = (
+            "⚠️ <b><u>CANNOT ENABLE AUTO FORWARD!</u></b>\n\n"
+            "The following required settings are missing:\n"
+            + "\n".join([f"  • {m}" for m in missing]) + "\n\n"
+            "<i>Please configure them using the Account and Forward buttons in the main menu.</i>"
         )
+        await safe_edit_menu(callback.message, missing_text, build_main_keyboard())
         await callback.answer("Missing configuration settings.")
         return
 
-    status_msg = await callback.message.edit_text("⏳ Connecting Pyrogram account & starting auto-forwarder...")
+    await safe_edit_menu(callback.message, "🔄 <b>Connecting account & starting auto-forwarder...</b>", None)
 
     try:
         session_str = config["session_string"]
@@ -50,29 +56,23 @@ async def cb_enable_forward(callback: CallbackQuery):
             destination_chat=dest
         )
 
-        await status_msg.edit_text(
-            text=(
-                "▶️ <b>Auto Forward Enabled & Active!</b>\n\n"
-                f"📥 <b>Source:</b> <code>{source}</code>\n"
-                f"📤 <b>Destination:</b> <code>{dest}</code>\n\n"
-                "The bot is now listening for incoming messages in real-time."
-            ),
-            reply_markup=build_main_keyboard(),
-            parse_mode="HTML"
+        active_text = (
+            "▶️ <b><u>AUTO FORWARD ENABLED & ACTIVE!</u></b>\n\n"
+            f"📥 <b>Source:</b> <code>{source}</code>\n"
+            f"📤 <b>Destination:</b> <code>{dest}</code>\n\n"
+            "❖ <i>The bot is listening for new incoming messages in real-time.</i>"
         )
+        await safe_edit_menu(callback.message, active_text, build_main_keyboard())
         await callback.answer("Auto forward enabled!")
 
     except Exception as e:
         logger.error(f"Error starting auto-forwarder for user {user_id}: {e}")
-        await status_msg.edit_text(
-            text=(
-                "❌ <b>Failed to Enable Auto Forward!</b>\n\n"
-                f"Error details: <code>{str(e)}</code>\n\n"
-                "Please verify your chat permissions, chat IDs, or session string and try again."
-            ),
-            reply_markup=build_main_keyboard(),
-            parse_mode="HTML"
+        error_text = (
+            "❌ <b><u>FAILED TO ENABLE AUTO FORWARD!</u></b>\n\n"
+            f"<b>Error details:</b> <code>{str(e)}</code>\n\n"
+            "Please verify chat permissions, IDs, or session string and try again."
         )
+        await safe_edit_menu(callback.message, error_text, build_main_keyboard())
         await callback.answer("Failed to enable auto forward.")
 
 @router.callback_query(F.data == "btn_disable_forward")
@@ -81,12 +81,10 @@ async def cb_disable_forward(callback: CallbackQuery):
     user_id = callback.from_user.id
     await pyrogram_manager.stop_forwarder(user_id)
 
-    await callback.message.edit_text(
-        text=(
-            "⏸ <b>Auto Forward Disabled!</b>\n\n"
-            "Real-time message forwarding has been stopped for your account."
-        ),
-        reply_markup=build_main_keyboard(),
-        parse_mode="HTML"
+    disabled_text = (
+        "⏸ <b><u>AUTO FORWARD DISABLED!</u></b>\n\n"
+        "❖ Real-time message forwarding has been stopped."
     )
+    await safe_edit_menu(callback.message, disabled_text, build_main_keyboard())
     await callback.answer("Auto forward disabled.")
+
