@@ -9,6 +9,7 @@ from utils.logger import logger
 # Import handlers
 from handlers.start import router as start_router
 from handlers.login import router as login_router
+from handlers.string_gen import router as string_gen_router
 from handlers.source import router as source_router
 from handlers.destination import router as destination_router
 from handlers.forward_control import router as forward_control_router
@@ -41,6 +42,7 @@ async def main():
     # Register router handlers
     dp.include_router(start_router)
     dp.include_router(login_router)
+    dp.include_router(string_gen_router)
     dp.include_router(source_router)
     dp.include_router(destination_router)
     dp.include_router(forward_control_router)

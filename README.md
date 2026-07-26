@@ -6,6 +6,7 @@ A lightweight, high-performance, modular Telegram Bot built with **Python 3.12**
 
 ## ⚡ Key Features
 
+- **Built-in String Session Generator**: Generate Pyrogram v2 String Session directly inside Telegram using `/string` command (supports OTP & 2FA Password).
 - **Automated Real-time Forwarding**: Forwards new messages immediately from source chat to destination chat.
 - **Universal Media Support**:
   - Text & Formatted Messages

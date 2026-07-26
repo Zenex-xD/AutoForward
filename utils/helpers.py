@@ -33,16 +33,16 @@ def clean_chat_input(input_str: str) -> str:
     return input_str
 
 def build_main_keyboard() -> InlineKeyboardMarkup:
-    """Constructs the primary 4-button bot UI inline keyboard."""
+    """Constructs the primary 4-button bot UI inline keyboard with stylish font."""
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="👤 Account", callback_data="btn_account"),
-                InlineKeyboardButton(text="📥 Forward", callback_data="btn_forward_menu")
+                InlineKeyboardButton(text="👤 𝐀ᴄᴄᴏᴜɴᴛ", callback_data="btn_account"),
+                InlineKeyboardButton(text="📥 𝐅ᴏʀᴡᴀʀᴅ", callback_data="btn_forward_menu")
             ],
             [
-                InlineKeyboardButton(text="▶️ Start Fwd", callback_data="btn_toggle_forward"),
-                InlineKeyboardButton(text="📊 Status", callback_data="btn_status")
+                InlineKeyboardButton(text="▶️ 𝐒ᴛᴀʀᴛ 𝐅ᴡᴅ", callback_data="btn_toggle_forward"),
+                InlineKeyboardButton(text="📊 𝐒ᴛᴀᴛᴜѕ", callback_data="btn_status")
             ]
         ]
     )
@@ -51,8 +51,9 @@ def build_account_keyboard() -> InlineKeyboardMarkup:
     """Constructs the Account management menu keyboard."""
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🔐 Login / Paste String Session", callback_data="btn_login")],
-            [InlineKeyboardButton(text="🔙 Back to Main Menu", callback_data="btn_back")]
+            [InlineKeyboardButton(text="⚡ 𝐆ᴇɴᴇʀᴀᴛᴇ 𝐒ᴇѕѕɪᴏɴ (/string)", callback_data="btn_gen_string")],
+            [InlineKeyboardButton(text="🔐 𝐋ᴏɢɪɴ / 𝐏ᴀѕᴛᴇ 𝐒ᴛʀɪɴɢ 𝐒ᴇѕѕɪᴏɴ", callback_data="btn_login")],
+            [InlineKeyboardButton(text="🔙 𝐁ᴀᴄᴋ", callback_data="btn_back")]
         ]
     )
 
@@ -60,24 +61,24 @@ def build_forward_keyboard() -> InlineKeyboardMarkup:
     """Constructs the Forward Settings menu keyboard."""
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="📥 Set Source Chat", callback_data="btn_set_source")],
-            [InlineKeyboardButton(text="📤 Set Destination Chat", callback_data="btn_set_destination")],
-            [InlineKeyboardButton(text="🔙 Back to Main Menu", callback_data="btn_back")]
+            [InlineKeyboardButton(text="📥 𝐒ᴇᴛ 𝐒ᴏᴜʀᴄᴇ 𝐂ʜᴀᴛ", callback_data="btn_set_source")],
+            [InlineKeyboardButton(text="📤 𝐒ᴇᴛ 𝐃ᴇѕᴛɪɴᴀᴛɪᴏɴ 𝐂ʜᴀᴛ", callback_data="btn_set_destination")],
+            [InlineKeyboardButton(text="🔙 𝐁ᴀᴄᴋ", callback_data="btn_back")]
         ]
     )
 
 def build_status_keyboard(is_active: bool = False) -> InlineKeyboardMarkup:
     """Constructs status action inline keyboard with toggle and reset options."""
     toggle_btn = (
-        InlineKeyboardButton(text="⏸ Disable Auto Forward", callback_data="btn_disable_forward")
+        InlineKeyboardButton(text="⏸ 𝐃ɪѕᴀʙʟᴇ 𝐀ᴜᴛᴏ 𝐅ᴏʀᴡᴀʀᴅ", callback_data="btn_disable_forward")
         if is_active
-        else InlineKeyboardButton(text="▶️ Enable Auto Forward", callback_data="btn_enable_forward")
+        else InlineKeyboardButton(text="▶️ 𝐄ɴᴀʙʟᴇ 𝐀ᴜᴛᴏ 𝐅ᴏʀᴡᴀʀᴅ", callback_data="btn_enable_forward")
     )
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [toggle_btn],
-            [InlineKeyboardButton(text="🗑 Reset Configuration", callback_data="btn_reset")],
-            [InlineKeyboardButton(text="🔙 Back to Main Menu", callback_data="btn_back")]
+            [InlineKeyboardButton(text="🗑 𝐑ᴇѕᴇᴛ 𝐂ᴏɴғɪɢᴜʀᴀᴛɪᴏɴ", callback_data="btn_reset")],
+            [InlineKeyboardButton(text="🔙 𝐁ᴀᴄᴋ", callback_data="btn_back")]
         ]
     )
 
@@ -85,7 +86,7 @@ def build_cancel_keyboard() -> InlineKeyboardMarkup:
     """Constructs a simple cancel/back button keyboard."""
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="❌ Cancel", callback_data="btn_cancel")]
+            [InlineKeyboardButton(text="❌ 𝐂ᴀɴᴄᴇʟ", callback_data="btn_cancel")]
         ]
     )
 
