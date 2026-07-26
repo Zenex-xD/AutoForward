@@ -1,0 +1,6 @@
+{
+  "name": "Auto Forward Telegram Bot",
+  "description": "Production-ready Python Telegram Auto-Forwarder Bot using aiogram 3 and Pyrogram 2, ready for Railway deployment.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
