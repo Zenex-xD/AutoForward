@@ -67,18 +67,50 @@ class PyrogramManager:
                 except Exception:
                     raise ValueError(f"Could not resolve or join invite link: {e}")
 
-        # Handle Chat ID or @username
-        try:
-            # Try parsing as integer chat ID if numeric
-            if chat_identifier.startswith("-100") or chat_identifier.isdigit() or (chat_identifier.startswith("-") and chat_identifier[1:].isdigit()):
-                chat_id = int(chat_identifier)
-                chat = await client.get_chat(chat_id)
-                return chat.id
+        # Helper to attempt get_chat with clean integer ID
+        clean_id = chat_identifier
+        target_id: Optional[int] = None
+
+        if clean_id.isdigit():
+            if clean_id.startswith("100"):
+                target_id = int(f"-{clean_id}")
             else:
-                chat = await client.get_chat(chat_identifier)
-                return chat.id
-        except Exception as e:
-            raise ValueError(f"Could not find or access chat '{chat_identifier}': {e}")
+                target_id = int(clean_id)
+        elif clean_id.startswith("-") and clean_id[1:].isdigit():
+            target_id = int(clean_id)
+
+        # First attempt: direct get_chat
+        try:
+            query = target_id if target_id is not None else clean_id
+            chat = await client.get_chat(query)
+            return chat.id
+        except Exception as first_err:
+            logger.warning(f"First attempt to get_chat('{chat_identifier}') failed: {first_err}. Refreshing dialogs cache...")
+
+        # If first attempt failed (e.g. Peer id invalid due to missing access hash in in-memory session),
+        # fetch user dialogs to populate Pyrogram's internal peer cache.
+        try:
+            async for _ in client.get_dialogs(limit=200):
+                pass
+        except Exception as d_err:
+            logger.warning(f"Failed to fetch dialogs: {d_err}")
+
+        # Second attempt after dialog cache population
+        try:
+            query = target_id if target_id is not None else clean_id
+            chat = await client.get_chat(query)
+            return chat.id
+        except Exception as second_err:
+            # Fallback: search dialogs manually if target_id is known
+            if target_id is not None:
+                try:
+                    async for dialog in client.get_dialogs():
+                        if dialog.chat.id == target_id:
+                            return dialog.chat.id
+                except Exception:
+                    pass
+
+            raise ValueError(f"Could not find or access chat '{chat_identifier}'. Ensure account is a member or admin. Error: {second_err}")
 
     async def start_forwarder(self, user_id: int, session_string: str, source_chat: str, destination_chat: str) -> bool:
         """Starts a Pyrogram client and begins auto-forwarding for the user."""

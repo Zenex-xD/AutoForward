@@ -9,6 +9,10 @@ def clean_chat_input(input_str: str) -> str:
     """
     input_str = input_str.strip()
 
+    # Auto-fix channel IDs missing minus sign (e.g. 1001975048253 -> -1001975048253)
+    if re.match(r"^100\d{10,}$", input_str):
+        return f"-{input_str}"
+
     # Check if pure integer Chat ID (e.g. -100123456789 or 123456789)
     if re.match(r"^-?\d+$", input_str):
         return input_str
