@@ -82,6 +82,21 @@ Create a `.env` file (or set environment variables in Railway):
 
 ---
 
+## 🟣 Deploying to Heroku
+
+### Option 1: 1-Click Deploy
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+1. Click the **Deploy to Heroku** button above or connect your GitHub repository in Heroku.
+2. Fill in the required Config Vars:
+   - `BOT_TOKEN` (from @BotFather)
+   - `API_ID` (from my.telegram.org)
+   - `API_HASH` (from my.telegram.org)
+3. Click **Deploy App**.
+4. Go to the **Resources** tab in your Heroku app dashboard, enable the `worker` or `web` dyno, and save!
+
+---
+
 ## 🚂 Deploying to Railway
 
 1. **Fork or Push** this repository to your GitHub account.

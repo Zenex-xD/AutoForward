@@ -1,0 +1,40 @@
+{
+  "name": "Telegram Auto Forwarder Bot",
+  "description": "Telegram Bot for automatic real-time message forwarding between channels and groups using Pyrogram String Session.",
+  "keywords": [
+    "telegram",
+    "forwarder",
+    "bot",
+    "pyrogram",
+    "aiogram",
+    "heroku"
+  ],
+  "website": "https://telegram.org",
+  "repository": "https://github.com/mosamlovanshi/telegram-auto-forwarder",
+  "success_url": "/",
+  "env": {
+    "BOT_TOKEN": {
+      "description": "Your Telegram Bot Token from @BotFather",
+      "required": true
+    },
+    "API_ID": {
+      "description": "Your Telegram API ID from my.telegram.org",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Your Telegram API Hash from my.telegram.org",
+      "required": true
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "eco"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
