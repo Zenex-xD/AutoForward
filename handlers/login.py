@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from utils.states import BotStates
-from utils.helpers import build_cancel_keyboard, build_account_keyboard, safe_edit_menu
+from utils.helpers import build_cancel_keyboard, build_accounts_keyboard, safe_edit_menu
 from services.pyrogram_manager import pyrogram_manager
 from database.db import db
 from utils.logger import logger
@@ -14,9 +14,9 @@ async def cb_login_start(callback: CallbackQuery, state: FSMContext):
     """Prompt user to paste Pyrogram String Session."""
     await state.set_state(BotStates.waiting_for_session)
     prompt_text = (
-        "🔐 <b><u>LOGIN PYROGRAM ACCOUNT</u></b>\n\n"
+        "🔐 <b><u>LOGIN TELEGRAM ACCOUNT</u></b>\n\n"
         "Please paste your <b>Pyrogram String Session</b> in the chat below.\n\n"
-        "❖ <i>Your session string is stored encrypted & locally in SQLite database.</i>"
+        "❖ <i>Your session string is stored securely in your database.</i>"
     )
     await safe_edit_menu(callback.message, prompt_text, build_cancel_keyboard())
     await callback.answer()
@@ -48,6 +48,8 @@ async def process_session_string(message: Message, state: FSMContext):
         )
 
         await state.clear()
+        accounts = await db.get_user_accounts(user_id)
+
         await status_msg.edit_text(
             text=(
                 "✅ <b><u>LOGIN SUCCESSFUL!</u></b>\n\n"
@@ -55,7 +57,7 @@ async def process_session_string(message: Message, state: FSMContext):
                 f"📞 <b>Phone / ID:</b> <code>{acc_info['phone_number']}</code>\n\n"
                 "❖ Your account session is active and saved securely."
             ),
-            reply_markup=build_account_keyboard(),
+            reply_markup=build_accounts_keyboard(accounts),
             parse_mode="HTML"
         )
     except Exception as e:
@@ -69,4 +71,3 @@ async def process_session_string(message: Message, state: FSMContext):
             reply_markup=build_cancel_keyboard(),
             parse_mode="HTML"
         )
-
