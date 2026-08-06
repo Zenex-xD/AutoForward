@@ -56,6 +56,25 @@ def build_main_keyboard() -> InlineKeyboardMarkup:
         ]
     )
 
+def build_account_keyboard() -> InlineKeyboardMarkup:
+    """Constructs keyboard for account navigation after login/string gen."""
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="👤 𝐕ɪᴇᴡ 𝐀ᴄᴄᴏᴜɴᴛѕ", callback_data="btn_accounts_list")],
+            [InlineKeyboardButton(text="🔙 𝐌ᴀɪɴ 𝐌ᴇɴᴜ", callback_data="btn_back")]
+        ]
+    )
+
+def build_forward_keyboard() -> InlineKeyboardMarkup:
+    """Constructs keyboard for route navigation after source/destination setting."""
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="🔀 𝐕ɪᴇᴡ 𝐑ᴏᴜᴛᴇѕ", callback_data="btn_routes_list")],
+            [InlineKeyboardButton(text="⚡ 𝐐ᴜɪᴄᴋ 𝐒ᴛᴀʀᴛ", callback_data="btn_toggle_forward")],
+            [InlineKeyboardButton(text="🔙 𝐌ᴀɪɴ 𝐌ᴇɴᴜ", callback_data="btn_back")]
+        ]
+    )
+
 def build_accounts_keyboard(accounts: List[Dict[str, Any]]) -> InlineKeyboardMarkup:
     """Constructs the Accounts List menu keyboard."""
     buttons = []
