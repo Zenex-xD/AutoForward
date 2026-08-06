@@ -14,6 +14,10 @@ API_ID = os.getenv("API_ID", "").strip()
 API_HASH = os.getenv("API_HASH", "").strip()
 DATABASE_PATH = os.getenv("DATABASE_PATH", "data/bot_database.db").strip()
 
+# MongoDB Configuration
+MONGO_URI = os.getenv("MONGO_URI", os.getenv("MONGODB_URI", "")).strip()
+MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "telegram_forwarder").strip()
+
 # Convert API_ID to int if provided
 if API_ID.isdigit():
     API_ID = int(API_ID)

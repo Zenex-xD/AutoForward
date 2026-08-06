@@ -78,7 +78,9 @@ Create a `.env` file (or set environment variables in Railway):
 | `BOT_TOKEN` | Telegram Bot Token from [@BotFather](https://t.me/BotFather) | `1234567890:ABCdefGHIjklMNOpqrsTUVwxyZ` |
 | `API_ID` | Telegram API ID from [my.telegram.org](https://my.telegram.org) | `12345678` |
 | `API_HASH` | Telegram API Hash from [my.telegram.org](https://my.telegram.org) | `0123456789abcdef0123456789abcdef` |
-| `DATABASE_PATH` | Path for SQLite storage | `data/bot_database.db` |
+| `MONGO_URI` | MongoDB Connection URI (e.g. MongoDB Atlas) | `mongodb+srv://user:pass@cluster0.xxx.mongodb.net/?retryWrites=true&w=majority` |
+| `MONGO_DB_NAME` | MongoDB Database Name (Optional, defaults to `telegram_forwarder`) | `telegram_forwarder` |
+| `DATABASE_PATH` | Fallback SQLite Path (If `MONGO_URI` is not set) | `data/bot_database.db` |
 
 ---
 

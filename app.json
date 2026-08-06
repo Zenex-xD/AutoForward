@@ -24,6 +24,10 @@
     "API_HASH": {
       "description": "Your Telegram API Hash from my.telegram.org",
       "required": true
+    },
+    "MONGO_URI": {
+      "description": "MongoDB Connection String (e.g., from MongoDB Atlas) for persistent cloud database storage",
+      "required": false
     }
   },
   "formation": {
